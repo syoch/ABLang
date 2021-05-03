@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ABlang</title>
+    <script>
+        'use strict';
+        var ABlang = {
+            "pointer": 0,
+            "values": [],
+            "print": function () { console.log(arguments[0]); this.out += arguments[0] + "\n" },
+            "read": function () { return "r" },
+            "get": function (i) { return this.values[i] },
+            "set": function (i, v) { return this.values[i] = v },
+            "out": "",
+            "err":""
+        };
+        function run(code__) {
+            ABlang.values=[]
+            for (var i = 0; i < 256; i++) {
+                ABlang.values.push(0)
+            }
+            ABlang.out = "";
+            ABlang.err=""
+            var code_=code__.split("\n").map((a)=>{return a.trim()}).filter((a)=>{return a.match(/^(a|b){16}$/)})
+            for (var i = 0; i < code_.length; i++) {
+                var code = (code_[i])
+                    .replace(/a/g, "0")
+                    .replace(/b/g, "1")
+                    .split(/(....)/)
+                    .filter((a) => { return a });
+                //console.log(ABlang.values,code)
+                if (code[0] != "0000") {
+                    ABlang.err=`codetype isn't aaaa line:${i}`
+                    console.error(`codetype isn't aaaa line:${i}`);
+                    break;
+                }
+                
+                switch (code[1]) {
+                    case "0000": {
+                        ABlang.print(ABlang.values[ABlang.pointer]);
+                        break;
+                    }
+                    case "0001": {
+                        ABlang.set(ABlang.read());
+                        break;
+                    }
+
+                    case "0100": {
+                        ABlang.set(
+                            ABlang.get(
+                                parseInt(code[2], 2) +
+                                parseInt(code[3], 2)
+                            )
+                        )
+                        break;
+                    }
+                    case "0101": {
+                        ABlang.set(
+                            ABlang.get(
+                                parseInt(code[2], 2) -
+                                parseInt(code[3], 2)
+                            )
+                        )
+                        break;
+                    }
+                    case "0110": {
+                        ABlang.set(
+                            ABlang.get(
+                                parseInt(code[2], 2) *
+                                parseInt(code[3], 2)
+                            )
+                        )
+                        break;
+                    }
+                    case "0111": {
+                        ABlang.set(
+                            ABlang.get(
+                                parseInt(code[2], 2) /
+                                parseInt(code[3], 2)
+                            )
+                        );
+                        break;
+                    }
+                    case "1000": {
+                        ABlang.pointer++;
+                        break;
+                    }
+                    case "1001": {
+                        ABlang.pointer--;
+                        break;
+                    }
+                    case "0010": {
+                        ABlang.values[ABlang.pointer]++;
+                        break;
+                    }
+                    case "0011": {
+                        ABlang.values[ABlang.pointer]--;
+                        break;
+                    }
+                    case "1010": {
+                        ABlang.values[ABlang.pointer] = (parseInt(code[3], 2)) | (parseInt(code[2], 2) << 4);
+                        break;
+                    }
+                    case "1100": {
+                        ABlang.print(
+                            ABlang.values
+                                .map((a) => { return a })
+                                .filter((a) => { return a != 0 })
+                                .map((a) => { return String.fromCharCode(a) })
+                                .join(""));
+                    }
+                    case "1110": {
+                        ABlang.values[ABlang.pointer] = (parseInt(code[3], 2)) | (parseInt(code[2], 2) << 4);
+                        ABlang.pointer++;
+                        break;
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>ABlang IDE</h1>
+    <h2>
+        ABlang v1.0
+        document v1.0
+    </h2>
+    <p>
+        ABlang is simple laungage
+        format:aaaaXXXXXXXXXXXX
+    </p>
+    <textarea spellcheck="false" id="ablang_program" placeholder="ABlang Program" style="height:200px;width:200px;float: left;">
+aaaabbbaabbabaaa
+aaaabbbaabbaabab
+aaaabbbaabbabbaa
+aaaabbbaabbabbaa
+aaaabbbaabbabbbb
+aaaabbbaaabaaaaa
+aaaabbbaabbbabbb
+aaaabbbaabbabbbb
+aaaabbbaabbbaaba
+aaaabbbaabbabbaa
+aaaabbbaabbaabaa
+aaaabbaaaaaaaaaa</textarea>
+    <div style="float:left">
+        <button onclick="run_()">Run</button><br>
+        <span id="abl_out">output</span>
+    </div>
+
+    <script>
+        run_ = () => {
+            var code = window.document.getElementById("ablang_program").value
+            //code = code.split("\n");
+            run(code);
+            if(ABlang.err!=""){
+                window.document.getElementById("abl_out").innerText = ABlang.err
+            }else{
+            window.document.getElementById("abl_out").innerText = ABlang.out
+            }
+            //ABlang.out="";
+        }
+    </script>
+</body>
+
+</html>

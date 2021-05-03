@@ -1,0 +1,47 @@
+ABlang document
+
+a=0
+b=1
+bittotal=16
+args=4
+
+format
+ 1~ 4=code type
+ 4~ 8=opcode
+ 8~12=arg1
+12~16=arg2
+
+codetype list
+aaaa only
+warn: code type must be aaaa else to exit
+opcode list
+
+aaaa=print value
+aaab=read in stdin to pointer value
+
+abaa=arg1+pointer index arg2=pointer value
+abab=arg1-pointer index arg2=pointer value
+abba=arg1*pointer index arg2=pointer value
+abbb=arg1/pointer index arg2=pointer value
+
+aaba=incliment pointer value
+aabb=decliment pointer value
+baaa=incliment pointer index
+baab=decliment pointer index
+baba=pointer value=arg1|arg2<<4
+bbaa=print all value
+bbba=pointer value=arg1|arg2<<4&incliment pointer index
+
+example (hello world)
+aaaabbbaabbabaaa
+aaaabbbaabbaabab
+aaaabbbaabbabbaa
+aaaabbbaabbabbaa
+aaaabbbaabbabbbb
+aaaabbbaaabaaaaa
+aaaabbbaabbbabbb
+aaaabbbaabbabbbb
+aaaabbbaabbbaaba
+aaaabbbaabbabbaa
+aaaabbbaabbaabaa
+aaaabbaaaaaaaaaa
